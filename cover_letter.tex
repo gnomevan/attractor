@@ -1,0 +1,43 @@
+\documentclass[11pt]{letter}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+
+\signature{Evan Paul}
+\address{[Your address]}
+
+\begin{document}
+
+\begin{letter}{%
+Editorial Office\\
+Physical Review Letters\\
+American Physical Society}
+
+\opening{Dear Editors,}
+
+I am submitting the enclosed manuscript, ``The Geometry of Learning: Data Complexity Controls the Fractal Dimension of Gradient Descent,'' for consideration as a Letter in Physical Review Letters.
+
+\textbf{Summary of the result.} We measure the fractal dimension of neural network training trajectories in function space using the Grassberger-Procaccia correlation dimension $D_2$. A convolutional network trained on CIFAR-10 with full-batch gradient descent produces a strange attractor with $D_2 = 3.67 \pm 0.08$ --- a genuinely multi-dimensional fractal object. Cross-architecture controls reveal that data complexity is both necessary and sufficient for this transition; architecture modulates only the learning-rate threshold at which it occurs. Peak chaos and peak geometric complexity dissociate, with the attractor most complex in the transition zone between chaotic and basin-convergent regimes.
+
+\textbf{Significance and broad appeal.} This work connects the empirical phenomenology of neural network training (Edge of Stability, sharpness oscillations, period-doubling) to the Newhouse-Ruelle-Takens route to chaos --- a framework from classical dynamical systems theory. The result that training trajectories are strange attractors whose dimension is controlled by data complexity reframes optimization as a problem in nonlinear dynamics, and provides a geometric language (fractal dimension, attractor structure, KAM transitions) for describing what happens during learning. We believe this is of interest to physicists working in nonlinear dynamics, statistical mechanics of learning, and complex systems, beyond the immediate machine learning community.
+
+\textbf{Disclosure of AI tool usage.} In accordance with APS policy, I wish to provide a full and transparent accounting of AI involvement in this work.
+
+AI language models (Claude, Anthropic) were used as interactive research tools throughout the project. This went beyond manuscript polishing and included:
+
+\begin{itemize}
+\item \textit{Experimental methodology:} The function-space Lyapunov protocol, the perturbation sensitivity analysis that identified the $\varepsilon = 10^{-8}$ numerical artifact, the cross-experiment design isolating data complexity from architecture, and the $D_2$ calibration pipeline against known attractors were developed through iterative dialogue with AI.
+\item \textit{Code development:} Experiment scripts (training loops, Grassberger-Procaccia implementation, persistent homology analysis, figure generation) were co-developed with AI assistance.
+\item \textit{Theoretical connections:} AI helped identify the mapping between the observed dynamics and the Ruelle-Takens/KAM framework, and helped locate relevant literature (Pittorino et al., Storm et al.).
+\item \textit{Manuscript preparation:} Multiple drafts were produced with AI assistance, including structural organization, prose revision, and \LaTeX{} formatting.
+\end{itemize}
+
+What was mine throughout: the original research question (whether training dynamics have toroidal/fractal geometry), all decisions about which experiments to run and which directions to pursue, the choice to measure correlation dimension rather than other invariants, the interpretation of results, and the decision to target PRL. I ran all experiments, verified all data, and take full responsibility for every claim in the manuscript.
+
+I recognize that this level of AI involvement exceeds what APS policy currently addresses under ``light editing.'' I have chosen full transparency because I believe the scientific community benefits from honest disclosure of evolving research practices, and because the work stands on its reproducible experimental results regardless of how the methodology was developed. All code and data are publicly available at \url{https://github.com/gnomevan/attractor}.
+
+\textbf{Referee suggestions.} [To be provided in the submission system.]
+
+\closing{Sincerely,}
+
+\end{letter}
+\end{document}
