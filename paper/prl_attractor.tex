@@ -10,7 +10,7 @@
 \title{The Geometry of Learning: Data Complexity Controls the Fractal Dimension of Gradient Descent}
 
 \author{Evan Paul}
-\email{evan@example.com}
+\email{evan@evanpaul.us}
 \affiliation{Independent Researcher}
 
 \date{\today}
@@ -40,7 +40,7 @@ The CNN has two convolutional layers ($3{\to}16{\to}32$ channels, $3{\times}3$ k
 \textit{Correlation dimension.}---$D_2$ is computed via the Grassberger-Procaccia algorithm~\cite{grassberger1983} on function-space trajectories (outputs recorded every 10 steps, first 20\% discarded as transient, yielding ${\sim}400$ points). Pipeline validation recovers $D_2 = 2.06$ for a quasiperiodic 2-torus (expected 2.0) and $D_2 = 1.68$ for the Lorenz attractor (expected 2.05). Extended calibration~\cite{sm} reveals a systematic 15--35\% underestimate for fractal attractors; reported values are conservative lower bounds.
 
 \begin{figure*}[t]
-\includegraphics[width=\textwidth]{cifar10_eos.png}
+\includegraphics[width=\textwidth]{figures/cifar10_eos.png}
 \caption{\label{fig:cnn}%
 CNN (268{,}650 parameters) on CIFAR-10, 10 seeds.
 (a)~Lyapunov exponent versus fraction of the EoS threshold $2/\lambda_{\max}$. The chaos window peaks at 15\% and closes near 45\%.
@@ -82,7 +82,7 @@ CNN/CIFAR & 269K & C-10 & $3.67(8)$ & 30 & 10\\
 \end{table}
 
 \begin{figure}[t]
-\includegraphics[width=\columnwidth]{figure2_cross_experiments_v2.png}
+\includegraphics[width=\columnwidth]{figures/figure2_cross_experiments.png}
 \caption{\label{fig:cross}%
 $D_2$ versus fraction of the EoS threshold for all five conditions. CNN on CIFAR-10 (red circles, 10 seeds) peaks at 30\% EoS; MLPs on CIFAR-10 (blue squares, green triangles, 3 seeds) peak at 90\% EoS. Synthetic conditions (open markers) remain at $D_2 \approx 1$ throughout. Error bars: standard deviation across seeds.}
 \end{figure}
