@@ -27,3 +27,16 @@ __pycache__/
 .vscode/
 .idea/
 *.swp
+data/cifar-10-batches-py/
+torus_theory/
+
+# Python virtual envs
+kam_env/
+venv/
+.venv/
+env/
+
+# Large data
+*.tar.gz
+*.zip
+*.dylib
