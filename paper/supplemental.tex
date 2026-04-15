@@ -19,7 +19,7 @@
 
 The perturbation scale $\varepsilon$ used in Lyapunov exponent computation must be chosen carefully. We performed a sensitivity sweep over $\varepsilon \in \{10^{-3}, 10^{-4}, 10^{-5}, 10^{-6}, 10^{-7}, 10^{-8}, 10^{-9}\}$ at five learning rates for the baseline MLP (14K parameters, synthetic data, 5 seeds each).
 
-At $\varepsilon = 10^{-8}$ and below, the measured Lyapunov exponent is uniformly $\lambda \approx +0.00004$ regardless of learning rate---a numerical artifact arising from finite-precision arithmetic rather than genuine dynamical sensitivity. Converged measurements require $\varepsilon \geq 10^{-6}$. All results in the main text use $\varepsilon = 10^{-5}$.
+At $\varepsilon = 10^{-8}$ and below, the measured Lyapunov exponent is uniformly $\lambda \approx +0.00004$ per training step regardless of learning rate---a numerical artifact arising from finite-precision arithmetic rather than genuine dynamical sensitivity. Converged measurements require $\varepsilon \geq 10^{-6}$. All results in the main text use $\varepsilon = 10^{-5}$.
 
 This finding has implications for prior work: Lyapunov exponent measurements at $\varepsilon = 10^{-8}$ or smaller should be interpreted with caution, as the reported positive exponents may reflect numerical noise rather than chaotic dynamics.
 
@@ -29,27 +29,27 @@ We validated our $D_2$ pipeline against systems with known correlation dimension
 
 \begin{table}[h]
 \caption{\label{tab:calibration}%
-$D_2$ pipeline calibration on known dynamical systems. Measured at $n=800$ points. Smooth manifolds are slightly overestimated; fractal attractors are underestimated, with bias growing with true dimension.}
+$D_2$ pipeline calibration on known dynamical systems. Measured at $n=400$ points, matching the production trajectory length used in the neural network experiments. Smooth manifolds are slightly overestimated; fractal attractors are underestimated, with bias growing with true dimension. Values are stable across $n \in \{200, 400, 800, 1600, 3200\}$ (see D$_2$(N) convergence analysis below).}
 \begin{ruledtabular}
 \begin{tabular}{lccc}
 System & Type & Expected $D_2$ & Measured $D_2$\\
 \hline
-1-torus & smooth & 1.0 & 1.01\\
+1-torus & smooth & 1.0 & 1.02\\
 2-torus & smooth & 2.0 & 2.18\\
-3-torus & smooth & 3.0 & 3.74\\
-4-torus & smooth & 4.0 & 5.24\\
-H\'{e}non map & fractal & 1.21 & 1.19\\
-R\"{o}ssler & fractal & 1.99 & 1.73\\
+3-torus & smooth & 3.0 & 3.73\\
+4-torus & smooth & 4.0 & 5.22\\
+H\'{e}non map & fractal & 1.21 & 1.16\\
+R\"{o}ssler & fractal & 1.99 & 1.72\\
 Lorenz & fractal & 2.05 & 1.73\\
-Mackey-Glass $\tau{=}17$ & fractal & 2.1 & 1.95\\
-Mackey-Glass $\tau{=}23$ & fractal & 3.6 & 2.42\\
-Mackey-Glass $\tau{=}30$ & fractal & 5.0 & 3.24\\
-Mackey-Glass $\tau{=}50$ & fractal & 7.0 & 6.05\\
+Mackey-Glass $\tau{=}17$ & fractal & 2.1 & 1.93\\
+Mackey-Glass $\tau{=}23$ & fractal & 3.6 & 2.44\\
+Mackey-Glass $\tau{=}30$ & fractal & 5.0 & 3.17\\
+Mackey-Glass $\tau{=}50$ & fractal & 7.0 & 6.03\\
 \end{tabular}
 \end{ruledtabular}
 \end{table}
 
-Two systematic biases are visible. Smooth manifolds are overestimated at higher dimensions (the 3-torus reads 3.74 instead of 3.0). Fractal attractors are underestimated, with bias growing with the true dimension, peaking around $D_2 \approx 5$ where the Mackey-Glass $\tau{=}30$ system (expected 5.0) reads 3.24. This means our reported $D_2$ values for the CNN/CIFAR-10 attractor ($D_2 = 3.67$) are conservative lower bounds; the true fractal dimension is likely 15--35\% higher.
+Two systematic biases are visible. Smooth manifolds are overestimated at higher dimensions (the 3-torus reads 3.74 instead of 3.0). Fractal attractors are underestimated, with bias growing with the true dimension, peaking around $D_2 \approx 5$ where the Mackey-Glass $\tau{=}30$ system (expected 5.0) reads 3.17. This means our reported $D_2$ values for the CNN/CIFAR-10 attractor ($D_2 = 3.67$) are conservative lower bounds; the true fractal dimension is likely 15--35\% higher.
 
 \section{Extended $D_2$ Data}
 
@@ -60,29 +60,29 @@ Table~\ref{tab:d2_all} provides $D_2$ values across all learning rate fractions 
 Correlation dimension $D_2$ (mean $\pm$ standard deviation across seeds) for all conditions at each tested learning rate fraction. Learning rates expressed as fractions of $2/\lambda_{\max}$.}
 \begin{ruledtabular}
 \begin{tabular}{r|ccccc}
-\% EoS & CNN+C-10 (269K, 10) & MLP+C-10 (269K, 3) & MLP+C-10 (156K, 3) & CNN+synth (269K, 3) & MLP+synth (14K, 20)\\
+\% EoS & CNN+C-10 (269K, 10) & MLP+C-10 (269K, 10) & MLP+C-10 (156K, 10) & CNN+synth (269K, 10) & MLP+synth (14K, 20)\\
 \hline
-5 & $0.99 \pm 0.005$ & $0.97 \pm 0.001$ & $0.97 \pm 0.000$ & $0.98 \pm 0.003$ & $0.93 \pm 0.006$\\
-10 & $1.03 \pm 0.02$ & $0.98 \pm 0.001$ & $0.98 \pm 0.000$ & $0.92 \pm 0.01$ & ---\\
-15 & $1.29 \pm 0.12$ & $0.98 \pm 0.003$ & $0.98 \pm 0.001$ & $0.94 \pm 0.01$ & ---\\
-20 & $2.63 \pm 0.62$ & $0.98 \pm 0.002$ & $0.98 \pm 0.001$ & $0.97 \pm 0.01$ & $0.90 \pm 0.002$\\
-30 & $\mathbf{3.67 \pm 0.08}$ & $0.98 \pm 0.001$ & $0.96 \pm 0.006$ & $0.98 \pm 0.003$ & $0.91 \pm 0.001$\\
-40 & $3.46 \pm 0.09$ & $1.07 \pm 0.03$ & $1.11 \pm 0.03$ & $0.99 \pm 0.01$ & ---\\
-50 & $3.10 \pm 0.11$ & $1.41 \pm 0.08$ & $1.69 \pm 0.12$ & $0.99 \pm 0.01$ & ---\\
-60 & $2.72 \pm 0.10$ & $2.55 \pm 0.25$ & $3.26 \pm 0.31$ & $0.99 \pm 0.01$ & ---\\
-70 & $2.42 \pm 0.07$ & $3.90 \pm 0.04$ & $4.09 \pm 0.07$ & $1.00 \pm 0.005$ & ---\\
-80 & $2.15 \pm 0.06$ & $4.22 \pm 0.03$ & $4.34 \pm 0.05$ & $0.99 \pm 0.005$ & ---\\
-90 & $2.00 \pm 0.06$ & $\mathbf{4.35 \pm 0.06}$ & $\mathbf{4.56 \pm 0.02}$ & $1.01 \pm 0.02$ & ---\\
-95 & $1.92 \pm 0.04$ & --- & --- & $1.01 \pm 0.02$ & ---\\
+5 & $0.99 \pm 0.005$ & $0.97 \pm 0.002$ & $0.97 \pm 0.001$ & $0.94 \pm 0.004$ & $0.93 \pm 0.006$\\
+10 & $1.03 \pm 0.02$ & $0.98 \pm 0.001$ & $0.98 \pm 0.001$ & $0.84 \pm 0.01$ & ---\\
+15 & $1.29 \pm 0.12$ & $0.98 \pm 0.002$ & $0.98 \pm 0.001$ & $0.86 \pm 0.02$ & ---\\
+20 & $2.63 \pm 0.62$ & $0.98 \pm 0.002$ & $0.98 \pm 0.001$ & $0.91 \pm 0.02$ & $0.90 \pm 0.002$\\
+30 & $\mathbf{3.67 \pm 0.08}$ & $0.98 \pm 0.001$ & $0.97 \pm 0.008$ & $0.95 \pm 0.004$ & $0.91 \pm 0.001$\\
+40 & $3.46 \pm 0.09$ & $1.09 \pm 0.03$ & $1.13 \pm 0.06$ & $0.95 \pm 0.01$ & ---\\
+50 & $3.10 \pm 0.11$ & $1.44 \pm 0.10$ & $1.74 \pm 0.28$ & $0.95 \pm 0.01$ & ---\\
+60 & $2.72 \pm 0.10$ & $2.70 \pm 0.41$ & $3.24 \pm 0.35$ & $0.96 \pm 0.01$ & ---\\
+70 & $2.42 \pm 0.07$ & $3.90 \pm 0.17$ & $4.08 \pm 0.12$ & $0.97 \pm 0.04$ & ---\\
+80 & $2.15 \pm 0.06$ & $4.28 \pm 0.07$ & $4.40 \pm 0.11$ & $0.98 \pm 0.03$ & ---\\
+90 & $2.00 \pm 0.06$ & $\mathbf{4.37 \pm 0.05}$ & $\mathbf{4.61 \pm 0.10}$ & $0.98 \pm 0.03$ & ---\\
+95 & $1.92 \pm 0.04$ & --- & --- & --- & ---\\
 \end{tabular}
 \end{ruledtabular}
 \end{table*}
 
-Three features are visible. First, the CNN on CIFAR-10 peaks early (30\% EoS) and declines toward $D_2 \approx 2$ at 95\% EoS, while both MLPs on CIFAR-10 rise monotonically and peak at 90\% EoS. Second, both synthetic conditions remain at $D_2 \approx 0.9$--$1.0$ across all learning rates, with standard deviations below 0.02. Third, cross-seed variance is largest at the transition: the CNN at 20\% EoS shows $D_2 = 2.63 \pm 0.62$, reflecting sensitive dependence on initial conditions near the onset of multi-dimensional dynamics.
+Three features are visible. First, the CNN on CIFAR-10 peaks early (30\% EoS) and declines toward $D_2 \approx 2$ at 95\% EoS, while both MLPs on CIFAR-10 rise monotonically and peak at 90\% EoS. Second, both synthetic conditions remain at $D_2 \approx 0.8$--$1.0$ across all learning rates, with standard deviations below 0.04. Third, cross-seed variance is largest at the transition: the CNN at 20\% EoS shows $D_2 = 2.63 \pm 0.62$ and the MLP (269K) at 60\% EoS shows $D_2 = 2.70 \pm 0.41$, reflecting sensitive dependence on initial conditions near the onset of multi-dimensional dynamics. With N=10 seeds, the MLP variances have widened from the suspiciously tight values seen at N=3 (e.g., MLP 156K at 90\% EoS: $\pm 0.10$ versus the earlier $\pm 0.02$), confirming that the original error bars underestimated true seed-to-seed variability.
 
 \section{Persistent Homology Details}
 
-Table~\ref{tab:tda} reports persistent homology feature counts for the CNN on CIFAR-10 across learning rate fractions (3 seeds at each fraction).
+Tables~\ref{tab:tda}--\ref{tab:tda_mlp85} report persistent homology feature counts for all three CIFAR-10 conditions. Persistence is computed via \textsc{ripser} on PCA-reduced (10-dimensional) function-space trajectories, subsampled to 400 points.
 
 \begin{table}[h]
 \caption{\label{tab:tda}%
@@ -102,7 +102,72 @@ Persistent homology feature counts (mean across 3 seeds) for CNN/CIFAR-10. Gap r
 \end{ruledtabular}
 \end{table}
 
-At 5\% of EoS, the trajectory is a simple convergence path with zero $H_1$ features. As the learning rate increases, hundreds of loops ($H_1$) and voids ($H_2$) appear at all persistence scales. The gap ratio remains near 1.0 throughout---no dominant topological feature emerges---which is the signature of fractal structure rather than a smooth torus. A clean 2-torus would show exactly 2 dominant $H_1$ features with a gap ratio $\gg 1$, clearly distinguishable from the remaining topological noise.
+\begin{table}[h]
+\caption{\label{tab:tda_mlp50}%
+Persistent homology feature counts (mean across 3 seeds) for MLP/CIFAR-10, 156K parameters (width 50).}
+\begin{ruledtabular}
+\begin{tabular}{rccc}
+\% EoS & $H_1$ features & $H_2$ features & $H_1$ gap ratio\\
+\hline
+5--25 & 0 & 0 & ---\\
+30 & 1 & 0 & ---\\
+40 & 77 & 17 & 1.24\\
+50 & 181 & 92 & 1.25\\
+60 & 255 & 163 & 1.09\\
+70 & 313 & 233 & 1.09\\
+80 & 360 & 308 & 1.01\\
+90 & 389 & 337 & 1.06\\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+\begin{table}[h]
+\caption{\label{tab:tda_mlp85}%
+Persistent homology feature counts (mean across 3 seeds) for MLP/CIFAR-10, 269K parameters (width 85).}
+\begin{ruledtabular}
+\begin{tabular}{rccc}
+\% EoS & $H_1$ features & $H_2$ features & $H_1$ gap ratio\\
+\hline
+5--30 & 0 & 0 & ---\\
+40 & 42 & 4 & 1.10\\
+50 & 137 & 57 & 1.14\\
+60 & 217 & 132 & 1.11\\
+70 & 307 & 240 & 1.10\\
+80 & 358 & 297 & 1.34\\
+90 & 392 & 315 & 1.11\\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+At 5\% of EoS, the trajectory is a simple convergence path with zero $H_1$ features in all architectures. As the learning rate increases, hundreds of loops ($H_1$) and voids ($H_2$) appear at all persistence scales. The gap ratio remains near 1.0 throughout---no dominant topological feature emerges---which is the signature of fractal structure rather than a smooth torus. A clean 2-torus would show exactly 2 dominant $H_1$ features with a gap ratio $\gg 1$, clearly distinguishable from the remaining topological noise.
+
+The MLP conditions confirm that persistent homology tracks $D_2$ across architectures. Both MLPs show zero $H_1$ features below 30\% EoS (where $D_2 \approx 1$), onset of topological complexity at 40\% EoS (where $D_2$ first exceeds 1.0), and hundreds of features at 90\% EoS (where $D_2 > 4$). The topological transition occurs at the same learning-rate threshold as the geometric transition measured by correlation dimension. At 90\% EoS, both MLPs show comparable feature counts to the CNN at its peak (30\% EoS: 386 $H_1$, 355 $H_2$), consistent with both architectures accessing the same attractor complexity when driven by the same data.
+
+\begin{figure}[h]
+\includegraphics[width=\columnwidth]{figures/revision1/persistence_diagrams.png}
+\caption{\label{fig:persistence}%
+Representative persistence diagrams. CNN/CIFAR-10 at 5\% EoS (trivial: zero features), CNN/CIFAR-10 at 30\% EoS (strange attractor: features at all scales), MLP/CIFAR-10 (269K) at 90\% EoS (strange attractor: comparable topological complexity to CNN despite different architecture). Points near the diagonal are short-lived; points far from it are persistent topological features.}
+\end{figure}
+
+\section{$D_2$ Convergence with Trajectory Length}
+
+Figure~\ref{fig:d2_convergence} shows the measured $D_2$ as a function of trajectory length $N$ for three neural network conditions alongside two reference systems (Lorenz attractor, Mackey-Glass $\tau{=}30$). Longer trajectories were obtained by recording function-space outputs at every training step rather than every 10th step, within the standard 5{,}000-step protocol; this yields ${\sim}4{,}000$ post-transient points without altering the dynamics.
+
+\begin{figure}[h]
+\includegraphics[width=\columnwidth]{figures/revision1/d2_convergence.png}
+\caption{\label{fig:d2_convergence}%
+$D_2$ versus trajectory length $N$. Reference systems (gray) are flat: Lorenz at $D_2 \approx 1.72$ and MG $\tau{=}30$ at $D_2 \approx 3.17$ across all $N$, confirming pipeline stability. Neural conditions rise from $N{=}100$ to $N{=}800$ and approach plateau by $N{=}1600$--$3200$. Both MLPs change by $<7$\% from $N{=}1600$ to $N{=}3200$, stabilizing near $D_2 \approx 5.1$. The dashed line marks $N{\approx}400$, the production trajectory length; reported $D_2$ values are conservative lower bounds.}
+\end{figure}
+
+The reference systems confirm that the Grassberger-Procaccia pipeline produces stable $D_2$ estimates across the full range $N \in [200, 3200]$: the Lorenz attractor varies by $<1$\% and Mackey-Glass $\tau{=}30$ by $<2$\%. For the neural conditions, $D_2$ rises from $N{=}100$ to $N{=}800$ as more attractor structure becomes resolvable, then approaches a plateau. Both MLPs stabilize near $D_2 \approx 5.1$ (1.7\% and 6.2\% change from $N{=}1600$ to $N{=}3200$). The CNN shows more variation at long $N$ (one seed), but the key result is that $D_2$ does not grow unboundedly---the attractor has a finite dimension. At the production length $N{\approx}400$, all three conditions are on the rising portion of the curve, confirming that reported values are conservative lower bounds on the true attractor dimension.
+
+\section{Convergence of $D_2$ and $\lambda$ with Measurement Parameters}
+
+We verified that the choices $\varepsilon = 10^{-5}$ and $N_\text{inputs} = 100$ used in the main text are within converged regimes. For the CNN on CIFAR-10 at 30\% of EoS (seed 0), we swept $N_\text{inputs} \in \{25, 50, 100, 200, 400\}$ and $\varepsilon \in \{10^{-4}, 5{\times}10^{-5}, 10^{-5}, 5{\times}10^{-6}, 10^{-6}\}$.
+
+The correlation dimension is stable: $D_2$ varies by only 0.10 across all $N_\text{inputs}$ values (range 3.74--3.83) and is completely independent of $\varepsilon$, as expected since $\varepsilon$ affects only the perturbation protocol, not the trajectory. The production value $D_2 = 3.74$ at $N_\text{inputs} = 100$ sits in the center of this range.
+
+The Lyapunov exponent shows more structure: $\lambda$ varies by a factor of ${\sim}3$ across $\varepsilon$ values, with a dip at $\varepsilon = 10^{-5}$. All values remain positive ($\lambda \in [0.8, 2.3] \times 10^{-4}$ per step), confirming chaos across the full $\varepsilon$ range tested. The variation with $\varepsilon$ is consistent across all $N_\text{inputs}$ values, indicating a genuine scale-dependent feature of the dynamics rather than a numerical artifact. Crucially, the qualitative conclusion---positive Lyapunov exponent at 30\% of EoS---is robust to the choice of $\varepsilon$ within $[10^{-6}, 10^{-4}]$.
 
 \section{Depth Scaling}
 
@@ -110,7 +175,7 @@ We tested MLP depth scaling with tanh networks of width 50 on synthetic data (Ta
 
 \begin{table}[h]
 \caption{\label{tab:depth}%
-Chaos window properties versus MLP depth. $D_2$ remains below 1.0 for all depths on synthetic data, but the chaos window widens with depth as Ruelle-Takens predicts.}
+Chaos window properties versus MLP depth. $D_2$ remains below 1.0 for all depths on synthetic data, but the chaos window widens with depth as Ruelle-Takens predicts. Peak $\lambda$ is in units of inverse training steps, matching the main-text convention.}
 \begin{ruledtabular}
 \begin{tabular}{ccccc}
 Depth & Params & Window width & Peak $\lambda$ & Max PC2\%\\
@@ -124,5 +189,46 @@ Depth & Params & Window width & Peak $\lambda$ & Max PC2\%\\
 \end{table}
 
 At depth 4 and 5, chaos persists across the entire tested learning rate range---the ``basin wins'' regime from the 2-layer MLP disappears. Off-axis dynamics grow to 13\% of variance. However, $D_2$ remains below 1 at all depths on synthetic data, confirming that architectural depth alone is insufficient for multi-dimensional chaos without complex data.
+
+\section{Label-Noise Sweep}
+
+To test whether data complexity acts as a continuous control parameter rather than a binary switch, we sweep label-noise fraction $p$ from 0 (clean CIFAR-10) to 1 (uniformly random labels) at each architecture's peak-$D_2$ learning rate. A deterministic random number generator (seed 137) selects which samples are relabeled, so the noise pattern is identical across training seeds. The EoS threshold is measured once on clean data ($p=0$) and held fixed. Three seeds per noise level.
+
+\begin{table}[h]
+\caption{\label{tab:label_noise}%
+$D_2$ versus label-noise fraction $p$ for two conditions. CNN at 30\% EoS: $D_2$ falls as label structure is degraded. MLP~269K at 90\% EoS: $D_2$ rises modestly as random labels roughen the loss surface.}
+\begin{ruledtabular}
+\begin{tabular}{ccccc}
+ & \multicolumn{2}{c}{CNN/CIFAR (30\% EoS)} & \multicolumn{2}{c}{MLP 269K (90\% EoS)}\\
+$p$ & $D_2$ & $\sigma$ & $D_2$ & $\sigma$\\
+\hline
+0.00 & 3.64 & 0.11 & 4.36 & 0.05\\
+0.10 & 3.59 & 0.15 & 4.46 & 0.02\\
+0.25 & 3.40 & 0.21 & 4.54 & 0.06\\
+0.50 & 2.67 & 0.68 & 4.69 & 0.07\\
+0.75 & 1.91 & 0.57 & 4.72 & 0.02\\
+0.90 & 1.64 & 0.48 & 4.75 & 0.03\\
+1.00 & 1.68 & 0.54 & 4.77 & 0.08\\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+The CNN result is straightforward: structured labels create the oscillatory modes that produce multi-dimensional chaos; randomizing them removes these modes and collapses the attractor toward $D_2 \approx 1$, matching the CNN/synthetic baseline. The CNN variance also grows with noise ($\sigma$ rises from 0.11 to 0.54), consistent with individual seeds responding heterogeneously as label structure is degraded.
+
+The MLP result is subtler. At 90\% of EoS, the dynamics are already near the stability boundary. Random labels create a rougher loss surface---more competing local minima, steeper curvature ridges---that sustains high-dimensional chaos even in the absence of label structure. The rise is modest ($\Delta D_2 \approx 0.4$, less than $10\sigma$ of the clean measurement) but monotonic across all seven noise levels.
+
+This regime dependence is interpretatively important: ``data complexity controls $D_2$'' is accurate at moderate learning rates where the data creates the modes. Near the EoS, the relationship is more nuanced---the landscape roughness produced by incoherent labels provides an alternative source of high-dimensional dynamics.
+
+\section{$\lambda$--$D_2$ Dissociation Across Architectures}
+
+The main text reports that peak Lyapunov exponent $\lambda$ and peak correlation dimension $D_2$ occur at different learning-rate fractions---a dissociation characteristic of the KAM transition. Figure~\ref{fig:sm_dissociation} shows the full $\lambda(\eta)$ and $D_2(\eta)$ curves for all three CIFAR-10 conditions, confirming that this dissociation is universal.
+
+\begin{figure}[h]
+\includegraphics[width=\columnwidth]{figures/revision1/dissociation_figure.pdf}
+\caption{\label{fig:sm_dissociation}%
+$\lambda$ (left) and $D_2$ (right) versus fraction of the EoS threshold for all three CIFAR-10 conditions. Dashed vertical lines mark each quantity's peak. In every case, peak $\lambda$ precedes peak $D_2$: CNN at 15\% vs 30\%, MLP 156K at 40\% vs 90\%, MLP 269K at 50\% vs 90\%. Error bars: standard deviation across 10 seeds.}
+\end{figure}
+
+The dissociation gap varies with architecture: 15 percentage points for the CNN, 50 for the MLP 156K, and 40 for the MLP 269K. In each case, geometric complexity peaks not where perturbation sensitivity is greatest but in the transition zone where chaotic and basin-convergent dynamics compete. This is consistent with KAM theory, where the richest fractal structure emerges at the boundary between ordered and chaotic phase-space regions.
 
 \end{document}

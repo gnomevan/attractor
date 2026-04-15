@@ -3,7 +3,7 @@
 \usepackage{hyperref}
 
 \signature{Evan Paul}
-\address{[Your address]}
+\address{evan@evanpaul.us \\ Nicasio, CA}
 
 \begin{document}
 
@@ -16,9 +16,11 @@ American Physical Society}
 
 I am submitting the enclosed manuscript, ``The Geometry of Learning: Data Complexity Controls the Fractal Dimension of Gradient Descent,'' for consideration as a Letter in Physical Review Letters.
 
-\textbf{Summary of the result.} We measure the fractal dimension of neural network training trajectories in function space using the Grassberger-Procaccia correlation dimension $D_2$. A convolutional network trained on CIFAR-10 with full-batch gradient descent produces a strange attractor with $D_2 = 3.67 \pm 0.08$ --- a genuinely multi-dimensional fractal object. Cross-architecture controls reveal that data complexity is both necessary and sufficient for this transition; architecture modulates only the learning-rate threshold at which it occurs. Peak chaos and peak geometric complexity dissociate, with the attractor most complex in the transition zone between chaotic and basin-convergent regimes.
+\textbf{Summary of the result.} We measure the fractal dimension of neural network training trajectories in function space using the Grassberger-Procaccia correlation dimension $D_2$. A convolutional network trained on CIFAR-10 with full-batch gradient descent produces a strange attractor with $D_2 = 3.67 \pm 0.08$ --- a genuinely multi-dimensional fractal object. Cross-architecture controls (five conditions, 10 seeds each) reveal that data complexity is both necessary and sufficient for this transition; architecture modulates only the learning-rate threshold at which it occurs. A continuous label-noise sweep from clean labels to fully random labels confirms that data complexity acts as a genuine control parameter, with attractor dimension responding smoothly to the information content of the labels. Peak chaos and peak geometric complexity dissociate universally across all architectures tested, with the attractor most complex in the transition zone between chaotic and basin-convergent regimes---consistent with the KAM transition.
 
 \textbf{Significance and broad appeal.} This work connects the empirical phenomenology of neural network training (Edge of Stability, sharpness oscillations, period-doubling) to the Newhouse-Ruelle-Takens route to chaos --- a framework from classical dynamical systems theory. The result that training trajectories are strange attractors whose dimension is controlled by data complexity reframes optimization as a problem in nonlinear dynamics, and provides a geometric language (fractal dimension, attractor structure, KAM transitions) for describing what happens during learning. We believe this is of interest to physicists working in nonlinear dynamics, statistical mechanics of learning, and complex systems, beyond the immediate machine learning community.
+
+\textbf{Measurement validation.} The $D_2$ pipeline is calibrated against 11 known dynamical systems (tori, H\'{e}non, Lorenz, R\"{o}ssler, Mackey-Glass) at the production trajectory length. A $D_2(N)$ convergence analysis confirms reported values are conservative lower bounds. Persistent homology independently confirms fractal topology for all architectures. The supplemental material provides convergence audits for all measurement parameters ($\varepsilon$, number of held-out inputs, trajectory length) and data for the full label-noise sweep.
 
 \textbf{Disclosure of AI tool usage.} In accordance with APS policy, I wish to provide a full and transparent accounting of AI involvement in this work.
 

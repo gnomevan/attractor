@@ -1,0 +1,185 @@
+{
+  "metadata": {
+    "script": "r1_cross_experiments.py",
+    "protocol_version": "r1-2026-04-09",
+    "protocol_hash": "2213b0b86cb25bfd",
+    "protocol_descriptor": "full-batch GD, MSE, no momentum, no WD | eval=100 | n_steps=5000 | eps=1e-5 | perturb=flat-unit-random direction RNG(seed+999999) | warmup=1000 @ lr=0.01 seed=0 | sharpness=15 power iter | lr_fractions=[.05,.10,.15,.20,.25,.30,.40,.50,.60,.70,.80,.90] | outputs every 10 steps | loss+gn every step (saved [::10]) | sharpness every 100 steps (t>0) | D2=GP 20 log-radii [percentile 1..95] fit[4:16] subsample<=2000 | Lyap=linregress log(dist) step window [0.2T,0.8T] | version=r1-2026-04-09",
+    "git_commit": "904c85272f6d6222f2a0da73fa4ddb8c6d79dc16",
+    "python": "3.13.12",
+    "torch_version": "2.11.0",
+    "numpy_version": "2.4.4",
+    "platform": "macOS-14.6.1-arm64-arm-64bit-Mach-O"
+  },
+  "condition": "cnn_cifar",
+  "lr_frac": 0.3,
+  "seed": 0,
+  "lam_max": 6.7605511313304305,
+  "lr_eos": 0.29583386933224975,
+  "lr_actual": 0.08875016079967492,
+  "n_inputs_grid": [
+    25,
+    50,
+    100,
+    200,
+    400
+  ],
+  "epsilon_grid": [
+    0.0001,
+    5e-05,
+    1e-05,
+    5e-06,
+    1e-06
+  ],
+  "measurements": [
+    {
+      "n_inputs": 25,
+      "epsilon": 0.0001,
+      "lyapunov": 0.0001351477317488229,
+      "corr_dim": 3.8336396081687267
+    },
+    {
+      "n_inputs": 25,
+      "epsilon": 5e-05,
+      "lyapunov": 0.00015327774862737827,
+      "corr_dim": 3.8336396081687267
+    },
+    {
+      "n_inputs": 25,
+      "epsilon": 1e-05,
+      "lyapunov": 6.0437168675835565e-05,
+      "corr_dim": 3.8336396081687267
+    },
+    {
+      "n_inputs": 25,
+      "epsilon": 5e-06,
+      "lyapunov": 0.0001786551007345133,
+      "corr_dim": 3.8336396081687267
+    },
+    {
+      "n_inputs": 25,
+      "epsilon": 1e-06,
+      "lyapunov": 0.0002092655111279621,
+      "corr_dim": 3.8336396081687267
+    },
+    {
+      "n_inputs": 50,
+      "epsilon": 0.0001,
+      "lyapunov": 0.0001450849239049432,
+      "corr_dim": 3.7383290621227907
+    },
+    {
+      "n_inputs": 50,
+      "epsilon": 5e-05,
+      "lyapunov": 0.00016212120070998337,
+      "corr_dim": 3.7383290621227907
+    },
+    {
+      "n_inputs": 50,
+      "epsilon": 1e-05,
+      "lyapunov": 7.116682138107304e-05,
+      "corr_dim": 3.7383290621227907
+    },
+    {
+      "n_inputs": 50,
+      "epsilon": 5e-06,
+      "lyapunov": 0.0001880983773034214,
+      "corr_dim": 3.7383290621227907
+    },
+    {
+      "n_inputs": 50,
+      "epsilon": 1e-06,
+      "lyapunov": 0.00022026551869105287,
+      "corr_dim": 3.7383290621227907
+    },
+    {
+      "n_inputs": 100,
+      "epsilon": 0.0001,
+      "lyapunov": 0.00015381570207580227,
+      "corr_dim": 3.7446013330627195
+    },
+    {
+      "n_inputs": 100,
+      "epsilon": 5e-05,
+      "lyapunov": 0.00016958282179014002,
+      "corr_dim": 3.7446013330627195
+    },
+    {
+      "n_inputs": 100,
+      "epsilon": 1e-05,
+      "lyapunov": 7.868432665217011e-05,
+      "corr_dim": 3.7446013330627195
+    },
+    {
+      "n_inputs": 100,
+      "epsilon": 5e-06,
+      "lyapunov": 0.00019463409289681742,
+      "corr_dim": 3.7446013330627195
+    },
+    {
+      "n_inputs": 100,
+      "epsilon": 1e-06,
+      "lyapunov": 0.00022811208051677536,
+      "corr_dim": 3.7446013330627195
+    },
+    {
+      "n_inputs": 200,
+      "epsilon": 0.0001,
+      "lyapunov": 0.00015867215595176195,
+      "corr_dim": 3.7596872815379454
+    },
+    {
+      "n_inputs": 200,
+      "epsilon": 5e-05,
+      "lyapunov": 0.00017247529615992078,
+      "corr_dim": 3.7596872815379454
+    },
+    {
+      "n_inputs": 200,
+      "epsilon": 1e-05,
+      "lyapunov": 8.398940250182584e-05,
+      "corr_dim": 3.7596872815379454
+    },
+    {
+      "n_inputs": 200,
+      "epsilon": 5e-06,
+      "lyapunov": 0.00019836852397889137,
+      "corr_dim": 3.7596872815379454
+    },
+    {
+      "n_inputs": 200,
+      "epsilon": 1e-06,
+      "lyapunov": 0.00023292338467263357,
+      "corr_dim": 3.7596872815379454
+    },
+    {
+      "n_inputs": 400,
+      "epsilon": 0.0001,
+      "lyapunov": 0.00015566635100317677,
+      "corr_dim": 3.7886146663898805
+    },
+    {
+      "n_inputs": 400,
+      "epsilon": 5e-05,
+      "lyapunov": 0.00016982990183219904,
+      "corr_dim": 3.7886146663898805
+    },
+    {
+      "n_inputs": 400,
+      "epsilon": 1e-05,
+      "lyapunov": 8.079136901885999e-05,
+      "corr_dim": 3.7886146663898805
+    },
+    {
+      "n_inputs": 400,
+      "epsilon": 5e-06,
+      "lyapunov": 0.00019501430057916884,
+      "corr_dim": 3.7886146663898805
+    },
+    {
+      "n_inputs": 400,
+      "epsilon": 1e-06,
+      "lyapunov": 0.0002307774629207786,
+      "corr_dim": 3.7886146663898805
+    }
+  ]
+}

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Earth Torus Stamp</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a0a14; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; font-family: system-ui, sans-serif; }
+canvas#render { display: block; }
+#save { position: fixed; bottom: 24px; right: 24px; background: rgba(255,255,255,0.1); color: #ccc; border: 1px solid rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+#save:hover { background: rgba(255,255,255,0.2); }
+</style>
+</head>
+<body>
+<canvas id="render" width="2400" height="1600"></canvas>
+<button id="save" onclick="saveImage()">Save as PNG</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+function saveImage() {
+  const link = document.createElement('a');
+  link.download = 'earth_torus_stamp.png';
+  link.href = document.getElementById('render').toDataURL('image/png');
+  link.click();
+}
+
+const W = 2400, H = 1600;
+const canvas = document.getElementById('render');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 1000);
+camera.position.set(10, 7, 13);
+camera.lookAt(0, 0, 0);
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H);
+renderer.setClearColor(0x0a0a14, 1);
+
+// --- Procedural Earth texture ---
+function createEarthTexture(tw, th) {
+  const c = document.createElement('canvas');
+  c.width = tw; c.height = th;
+  const ctx = c.getContext('2d');
+  
+  // Ocean base
+  ctx.fillStyle = '#1a4a7a';
+  ctx.fillRect(0, 0, tw, th);
+  
+  // Deep ocean variation
+  for (let i = 0; i < 40; i++) {
+    ctx.fillStyle = `rgba(15,55,100,${0.1 + Math.random()*0.15})`;
+    ctx.beginPath();
+    ctx.ellipse(Math.random()*tw, Math.random()*th, 20+Math.random()*60, 10+Math.random()*40, Math.random()*Math.PI, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  function drawLandmass(points, color) {
+    ctx.fillStyle = color;
+    ctx.strokeStyle = 'rgba(60,120,60,0.3)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(points[0][0] * tw, points[0][1] * th);
+    for (let i = 1; i < points.length; i++) {
+      ctx.lineTo(points[i][0] * tw, points[i][1] * th);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+  
+  const land1 = '#2d6e3f';
+  const land2 = '#3a7d4a';
+  const land3 = '#4a8955';
+  const desert = '#8a7d52';
+  const ice = '#c8d8e8';
+
+  // North America
+  drawLandmass([
+    [0.08,0.18],[0.12,0.15],[0.18,0.14],[0.22,0.18],[0.25,0.22],
+    [0.27,0.28],[0.26,0.34],[0.22,0.38],[0.20,0.42],[0.17,0.45],
+    [0.14,0.42],[0.12,0.38],[0.10,0.34],[0.08,0.28],[0.06,0.22]
+  ], land2);
+  
+  // Central America
+  drawLandmass([
+    [0.17,0.45],[0.19,0.46],[0.20,0.50],[0.19,0.53],[0.17,0.52],[0.16,0.48]
+  ], land1);
+  
+  // South America
+  drawLandmass([
+    [0.20,0.53],[0.24,0.52],[0.27,0.56],[0.28,0.62],[0.27,0.68],
+    [0.25,0.74],[0.22,0.80],[0.20,0.78],[0.19,0.72],[0.18,0.65],
+    [0.18,0.58],[0.19,0.55]
+  ], land1);
+  
+  // Amazon
+  drawLandmass([
+    [0.21,0.56],[0.25,0.55],[0.26,0.60],[0.24,0.63],[0.21,0.61]
+  ], '#1d5e2f');
+  
+  // Europe
+  drawLandmass([
+    [0.44,0.16],[0.48,0.15],[0.52,0.17],[0.54,0.20],[0.52,0.25],
+    [0.50,0.30],[0.47,0.32],[0.44,0.30],[0.43,0.25],[0.43,0.20]
+  ], land2);
+  
+  // British Isles
+  drawLandmass([[0.42,0.20],[0.44,0.19],[0.44,0.24],[0.42,0.24]], land3);
+  
+  // Scandinavia  
+  drawLandmass([
+    [0.48,0.10],[0.51,0.08],[0.53,0.10],[0.52,0.15],[0.49,0.14]
+  ], land3);
+  
+  // Africa
+  drawLandmass([
+    [0.44,0.35],[0.48,0.33],[0.54,0.35],[0.56,0.40],[0.57,0.48],
+    [0.55,0.56],[0.52,0.62],[0.50,0.68],[0.48,0.70],[0.46,0.67],
+    [0.44,0.60],[0.43,0.52],[0.42,0.44],[0.43,0.38]
+  ], land1);
+  
+  // Sahara
+  drawLandmass([
+    [0.44,0.36],[0.50,0.34],[0.55,0.37],[0.56,0.42],[0.52,0.44],
+    [0.47,0.43],[0.44,0.40]
+  ], desert);
+  
+  // Middle East
+  drawLandmass([
+    [0.56,0.28],[0.60,0.30],[0.62,0.34],[0.60,0.38],[0.57,0.36],[0.55,0.32]
+  ], desert);
+  
+  // Asia / Russia
+  drawLandmass([
+    [0.54,0.12],[0.60,0.08],[0.68,0.07],[0.76,0.08],[0.82,0.10],
+    [0.88,0.14],[0.90,0.18],[0.88,0.22],[0.84,0.24],[0.78,0.22],
+    [0.72,0.20],[0.66,0.18],[0.60,0.16],[0.55,0.16]
+  ], land3);
+  
+  // India
+  drawLandmass([
+    [0.64,0.34],[0.68,0.32],[0.70,0.36],[0.69,0.44],[0.66,0.48],
+    [0.64,0.44],[0.63,0.38]
+  ], land1);
+  
+  // China / SE Asia
+  drawLandmass([
+    [0.70,0.22],[0.78,0.20],[0.82,0.24],[0.84,0.30],[0.82,0.36],
+    [0.78,0.38],[0.74,0.36],[0.72,0.32],[0.70,0.26]
+  ], land2);
+  
+  // Japan
+  drawLandmass([[0.86,0.24],[0.88,0.22],[0.89,0.28],[0.87,0.30],[0.85,0.28]], land3);
+  
+  // Indonesia / SE Asia islands
+  drawLandmass([[0.78,0.48],[0.82,0.47],[0.84,0.50],[0.82,0.52],[0.78,0.51]], land1);
+  drawLandmass([[0.84,0.49],[0.87,0.48],[0.88,0.51],[0.86,0.52]], land1);
+  
+  // Australia
+  drawLandmass([
+    [0.82,0.58],[0.88,0.56],[0.92,0.58],[0.94,0.62],[0.93,0.68],
+    [0.90,0.72],[0.86,0.72],[0.83,0.68],[0.82,0.63]
+  ], desert);
+  // Eastern Australia green
+  drawLandmass([
+    [0.90,0.58],[0.93,0.60],[0.94,0.65],[0.92,0.70],[0.90,0.68],[0.89,0.62]
+  ], land2);
+  
+  // Antarctica
+  drawLandmass([
+    [0.0,0.88],[0.15,0.86],[0.30,0.87],[0.45,0.86],[0.60,0.87],
+    [0.75,0.86],[0.90,0.87],[1.0,0.88],[1.0,1.0],[0.0,1.0]
+  ], ice);
+  
+  // Greenland
+  drawLandmass([
+    [0.30,0.08],[0.34,0.06],[0.38,0.07],[0.37,0.14],[0.34,0.16],[0.30,0.13]
+  ], ice);
+  
+  // Arctic
+  drawLandmass([
+    [0.0,0.0],[1.0,0.0],[1.0,0.04],[0.85,0.05],[0.70,0.04],
+    [0.55,0.05],[0.40,0.04],[0.25,0.05],[0.10,0.04],[0.0,0.04]
+  ], ice);
+  
+  // Add some texture/noise to land
+  for (let i = 0; i < 200; i++) {
+    const x = Math.random() * tw;
+    const y = Math.random() * th;
+    const pixel = ctx.getImageData(x, y, 1, 1).data;
+    if (pixel[1] > pixel[2] + 20) { // on land
+      ctx.fillStyle = `rgba(${30+Math.random()*40},${80+Math.random()*60},${30+Math.random()*40},0.2)`;
+      ctx.beginPath();
+      ctx.arc(x, y, 2+Math.random()*6, 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+  
+  // Cloud wisps
+  ctx.globalAlpha = 0.08;
+  ctx.fillStyle = '#ffffff';
+  for (let i = 0; i < 60; i++) {
+    ctx.beginPath();
+    ctx.ellipse(Math.random()*tw, Math.random()*th, 15+Math.random()*50, 3+Math.random()*10, Math.random()*Math.PI, 0, Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  
+  return new THREE.CanvasTexture(c);
+}
+
+// Create texture - repeats around the major axis to simulate the rolling stamp
+const earthTex = createEarthTexture(2048, 512);
+earthTex.wrapS = THREE.RepeatWrapping;
+earthTex.wrapT = THREE.RepeatWrapping;
+// Repeat: 1 across minor circumference (V), ~12 visible stamps around major circumference (U)
+earthTex.repeat.set(12, 1);
+
+const R = 5, r = 1.4;
+
+// Main torus with Earth texture
+const torusGeo = new THREE.TorusGeometry(R, r, 64, 200);
+const torusMat = new THREE.MeshPhongMaterial({
+  map: earthTex,
+  shininess: 15,
+  specular: 0x112233
+});
+const torus = new THREE.Mesh(torusGeo, torusMat);
+torus.rotation.x = Math.PI / 2;
+scene.add(torus);
+
+// Atmosphere glow ring
+const glowGeo = new THREE.TorusGeometry(R, r + 0.06, 48, 120);
+const glowMat = new THREE.MeshBasicMaterial({
+  color: 0x4488cc,
+  transparent: true,
+  opacity: 0.06,
+  side: THREE.DoubleSide
+});
+const glow = new THREE.Mesh(glowGeo, glowMat);
+glow.rotation.x = Math.PI / 2;
+scene.add(glow);
+
+// Sun at center
+const sunGeo = new THREE.SphereGeometry(0.45, 32, 32);
+const sunMat = new THREE.MeshBasicMaterial({ color: 0xffd060 });
+scene.add(new THREE.Mesh(sunGeo, sunMat));
+
+const sunGlow1 = new THREE.SphereGeometry(0.65, 32, 32);
+const sg1 = new THREE.MeshBasicMaterial({ color: 0xffc840, transparent: true, opacity: 0.25 });
+scene.add(new THREE.Mesh(sunGlow1, sg1));
+
+const sunGlow2 = new THREE.SphereGeometry(0.9, 32, 32);
+const sg2 = new THREE.MeshBasicMaterial({ color: 0xffaa20, transparent: true, opacity: 0.08 });
+scene.add(new THREE.Mesh(sunGlow2, sg2));
+
+// Lighting
+scene.add(new THREE.AmbientLight(0x334466, 0.6));
+const sunLight = new THREE.PointLight(0xffeedd, 1.8, 25);
+sunLight.position.set(0, 0, 0);
+scene.add(sunLight);
+const fillLight = new THREE.DirectionalLight(0x8899bb, 0.3);
+fillLight.position.set(-5, 8, 3);
+scene.add(fillLight);
+
+// Starfield
+const starCount = 800;
+const starGeo = new THREE.BufferGeometry();
+const starPos = new Float32Array(starCount * 3);
+for (let i = 0; i < starCount; i++) {
+  const theta = Math.random() * Math.PI * 2;
+  const phi = Math.acos(2 * Math.random() - 1);
+  const rad = 40 + Math.random() * 40;
+  starPos[i*3] = rad * Math.sin(phi) * Math.cos(theta);
+  starPos[i*3+1] = rad * Math.sin(phi) * Math.sin(theta);
+  starPos[i*3+2] = rad * Math.cos(phi);
+}
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.15, transparent: true, opacity: 0.6 });
+scene.add(new THREE.Points(starGeo, starMat));
+
+// Render
+renderer.render(scene, camera);
+
+// Scale canvas display to fit viewport
+const displayCanvas = document.getElementById('render');
+const maxW = Math.min(window.innerWidth - 40, 1200);
+const scale = maxW / W;
+displayCanvas.style.width = maxW + 'px';
+displayCanvas.style.height = (H * scale) + 'px';
+displayCanvas.style.borderRadius = '12px';
+</script>
+</body>
+</html>

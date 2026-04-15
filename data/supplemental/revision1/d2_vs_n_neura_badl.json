@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "script": "r1_cross_experiments.py",
+    "protocol_version": "r1-2026-04-09",
+    "protocol_hash": "2213b0b86cb25bfd",
+    "protocol_descriptor": "full-batch GD, MSE, no momentum, no WD | eval=100 | n_steps=5000 | eps=1e-5 | perturb=flat-unit-random direction RNG(seed+999999) | warmup=1000 @ lr=0.01 seed=0 | sharpness=15 power iter | lr_fractions=[.05,.10,.15,.20,.25,.30,.40,.50,.60,.70,.80,.90] | outputs every 10 steps | loss+gn every step (saved [::10]) | sharpness every 100 steps (t>0) | D2=GP 20 log-radii [percentile 1..95] fit[4:16] subsample<=2000 | Lyap=linregress log(dist) step window [0.2T,0.8T] | version=r1-2026-04-09",
+    "git_commit": "unknown",
+    "python": "3.12.11",
+    "torch_version": "2.8.0+cu128",
+    "numpy_version": "1.26.4",
+    "platform": "Linux-6.8.0-1024-aws-x86_64-with-glibc2.39"
+  },
+  "conditions": {
+    "cnn_cifar": {
+      "lr_frac": 0.3,
+      "seed": 0,
+      "lam_max": 6.760478220880032,
+      "lr_eos": 0.29583705984332775,
+      "lr_actual": 0.08875111795299832,
+      "n_steps_total": 32000,
+      "n_trajectory_points": 2560,
+      "sharpness_saturation": {
+        "is_saturated": 
