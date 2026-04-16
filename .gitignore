@@ -40,3 +40,6 @@ env/
 *.tar.gz
 *.zip
 *.dylib
+.claude/
+paper/prl_referee_report.md
+paper/revision2_plan.md
