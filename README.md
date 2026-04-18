@@ -1,191 +1,211 @@
-# Strange Attractors of Gradient Descent
+<p align="center">
+  <img src="paper/figures/figure2_cross_experiments.png" width="560" alt="Correlation dimension D₂ versus learning rate for five experimental conditions">
+</p>
 
-**Paper:** *The Geometry of Learning: Data Complexity Controls the Fractal Dimension of Gradient Descent*
+<h1 align="center">Strange Attractors in Gradient Descent</h1>
 
-**Target:** Physical Review Letters
+<p align="center">
+  <em>Data structure and loss geometry control the fractal dimension of training dynamics</em>
+</p>
 
-**Author:** Evan Paul (evan@evanpaul.us)
+<p align="center">
+  <a href="https://arxiv.org/abs/XXXX.XXXXX"><img src="https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b.svg" alt="arXiv"></a>
+  <a href="#license"><img src="https://img.shields.io/badge/code-MIT-blue.svg" alt="License: MIT"></a>
+  <a href="#license"><img src="https://img.shields.io/badge/paper%20%26%20data-CC--BY%204.0-green.svg" alt="License: CC-BY 4.0"></a>
+</p>
 
 ---
 
-## Key Result
+## Overview
 
-Neural network training trajectories in function space are strange attractors. A CNN trained on CIFAR-10 produces a fractal attractor with correlation dimension D₂ = 3.67 ± 0.08 at 30% of the Edge of Stability threshold. Data complexity — not architecture — is the necessary ingredient for multi-dimensional chaos. A continuous label-noise sweep confirms that data complexity acts as a genuine control parameter: degrading label structure smoothly reduces D₂ from 3.6 to 1.7 at moderate learning rates. Peak chaos (Lyapunov exponent) and peak geometric complexity (D₂) dissociate universally across architectures, consistent with the KAM transition.
+Neural network training trajectories in function space are **strange attractors**. We measure the [Grassberger–Procaccia correlation dimension](https://en.wikipedia.org/wiki/Correlation_dimension) *D*₂ of these trajectories under full-batch gradient descent and find:
+
+| Finding | Detail |
+|:--------|:-------|
+| **Fractal training dynamics** | A CNN on CIFAR-10 produces an attractor with *D*₂ ≈ 5 (converged); conservative lower bound *D*₂ = 3.67 ± 0.08 |
+| **Data is necessary** | Either architecture on structureless synthetic data gives *D*₂ ≈ 1 — no multi-dimensional chaos |
+| **Two control mechanisms** | At moderate learning rates, structured labels create the oscillatory modes; near the Edge of Stability, loss-surface roughness sustains chaos independently |
+| **Robust to SGD** | The attractor retains > 82% of its fractal dimension at 20× gradient noise |
+
+**Paper:** Evan Paul, *Strange Attractors in Gradient Descent: Data Structure and Loss Geometry Control Fractal Dimension* — submitted to Physical Review Letters.
+
+<details>
+<summary><strong>Key figures</strong></summary>
+<br>
+
+**Figure 1** — CNN on CIFAR-10: Lyapunov divergence rate, correlation dimension, off-axis dynamics, and sharpness across learning rates.
+
+<img src="paper/figures/cifar10_eos.png" width="700" alt="Figure 1: CNN on CIFAR-10">
+
+**Figure 3** — Label-noise sweep reveals regime-dependent control. *D*₂ falls with label noise at 30% EoS (CNN) but rises at 90% EoS (MLP).
+
+<img src="paper/figures/revision1/label_noise_d2.png" width="420" alt="Figure 3: Label-noise sweep">
+
+</details>
 
 ---
 
-## Repository Layout
+## Quickstart
+
+### Requirements
+
+Python ≥ 3.9 with:
 
 ```
-attractor/
-├── README.md                      this file
-├── .gitignore
-│
-├── paper/                         manuscript, supplemental, cover letter
-│   ├── prl_attractor.tex          main manuscript (RevTeX 4.2, PRL format)
-│   ├── prl_attractor.pdf          compiled manuscript
-│   ├── supplemental.tex           supplemental material
-│   ├── supplemental.pdf
-│   ├── cover_letter.tex           cover letter for PRL submission
-│   ├── cover_letter.pdf
-│   ├── references.bib             BibTeX bibliography
-│   ├── revision1_plan.md          revision plan and status tracker
-│   └── figures/
-│       ├── cifar10_eos.png        Fig. 1: CNN/CIFAR-10 four-panel
-│       ├── figure2_cross_experiments.png    Fig. 2: D₂ vs EoS across conditions
-│       └── revision1/
-│           ├── label_noise_d2.pdf         Fig. 3: D₂ vs label-noise fraction
-│           ├── persistence_diagrams.png   SM: persistence diagrams
-│           ├── d2_convergence.png         SM: D₂(N) convergence
-│           └── dissociation_figure.pdf    SM: λ–D₂ dissociation
-│
-├── data/
-│   ├── main/                      data backing main-text figures/tables
-│   │   ├── cifar10_eos_10seeds.json           CNN/CIFAR-10, 10 seeds
-│   │   ├── cifar10_eos.json                   CNN/CIFAR-10, 3 seeds (legacy)
-│   │   ├── cross_small_mlp_cifar_w50_seeds_0_1_2.json    MLP 156K legacy
-│   │   ├── cross_cnn_synthetic_seeds_0.json   CNN/synthetic legacy
-│   │   ├── tda_cifar10_reconstructed.json     persistent homology features
-│   │   └── revision1/
-│   │       ├── cross_small_mlp_cifar_w50_seeds_merged.json   MLP 156K, 10 seeds
-│   │       ├── cross_small_mlp_cifar_w85_seeds_merged.json   MLP 269K, 10 seeds
-│   │       ├── cross_cnn_synthetic_seeds_merged.json          CNN/synth, 10 seeds
-│   │       └── label_noise_sweep.json         label-noise D₂(p), 2 archs × 7 levels × 3 seeds
-│   │
-│   ├── supplemental/              data backing supplement tables
-│   │   ├── d2_calibration.json    calibration (legacy, n=800)
-│   │   ├── depth_scaling.json     MLP depth 2/3/4/5
-│   │   ├── relu_comparison.json   tanh vs ReLU
-│   │   └── revision1/
-│   │       ├── d2_calibration_n400.json       calibration at n=400
-│   │       ├── d2_vs_n_reference.json         D₂(N) for Lorenz + MG τ=30
-│   │       ├── d2_vs_n_neural.json            D₂(N) for neural conditions
-│   │       ├── tda_mlp_cifar_w50.json         persistent homology, MLP 156K
-│   │       ├── tda_mlp_cifar_w85.json         persistent homology, MLP 269K
-│   │       ├── tda_cnn_cifar_diagrams.json    CNN persistence diagrams
-│   │       ├── convergence_n_inputs_epsilon.json   ε/N_inputs audit
-│   │       └── dissociation_analysis.json     λ–D₂ dissociation analysis
-│   │
-│   └── phase1_phase2/             MLP baseline experiments (NPZ arrays, read-only)
-│
-├── code/                          experiment scripts
-│   ├── phase3_experiments_k.py    CNN/CIFAR-10 + architecture scaling (original)
-│   ├── cnn_seeds_v2.py            CNN multi-seed, seeds 0–2 (original)
-│   ├── cnn_seeds_extension_fixed.py   CNN extension, seeds 3–9 (original)
-│   ├── experiment_L_tda_fixed.py  persistent homology (original)
-│   └── revision1/
-│       ├── r1_cross_experiments.py        unified cross-experiment generator (N=10)
-│       ├── r1_merge.py                    merge legacy + new seeds
-│       ├── r1_figure2.py                  publication Figure 2
-│       ├── r1_calibration_n400.py         D₂ calibration at n=400
-│       ├── r1_d2_convergence.py           D₂(N) convergence (GPU)
-│       ├── r1_d2_convergence_figure.py    convergence figure
-│       ├── r1_tda_mlp_cifar.py            persistent homology for MLPs (GPU + ripser)
-│       ├── r1_persistence_figure.py       persistence diagram figure
-│       ├── r1_lyap_units_check.py         ε/N_inputs sensitivity audit
-│       ├── r1_label_noise_sweep.py        label-noise D₂(p) sweep (GPU)
-│       ├── r1_label_noise_figure.py       label-noise figure
-│       └── r1_dissociation_analysis.py    λ–D₂ dissociation analysis + figure
-│
-└── docs/                          internal / reference documents
-    ├── chaos_onset_findings_report_v5.md
-    ├── prl_draft_v05.md
-    ├── strange_attractors_and_generalization.md
-    └── repository_manifest_v2.md
+torch >= 2.0
+torchvision
+numpy
+scipy
+matplotlib
+ripser          # for persistent homology
 ```
 
----
+Install:
 
-## Building the Paper
+```bash
+pip install torch torchvision numpy scipy matplotlib ripser
+```
 
-The manuscript uses RevTeX 4.2 for PRL format. From the repository root:
+### Run the core experiment
+
+```bash
+# CNN on CIFAR-10, single seed — takes ~5 min on GPU
+python code/revision1/r1_cross_experiments.py --condition cnn_cifar --seeds 0 --quick
+```
+
+### Build the paper
+
+Requires a TeX distribution with `revtex4-2` (included in MacTeX and `texlive-publishers`):
 
 ```bash
 cd paper
-pdflatex prl_attractor
-bibtex   prl_attractor
-pdflatex prl_attractor
-pdflatex prl_attractor
-
-pdflatex supplemental
-pdflatex cover_letter
+pdflatex prl_attractor && bibtex prl_attractor && pdflatex prl_attractor && pdflatex prl_attractor
+pdflatex supplemental && bibtex supplemental && pdflatex supplemental && pdflatex supplemental
 ```
-
-Or with `latexmk`:
-
-```bash
-cd paper
-latexmk -pdf prl_attractor.tex
-latexmk -pdf supplemental.tex
-latexmk -pdf cover_letter.tex
-```
-
-Requires a TeX Live distribution with the `revtex` package installed (included in `texlive-publishers` on Debian/Ubuntu, or MacTeX by default).
 
 ---
 
-## Reproducing the Experiments
+## Reproducing all results
 
-All experiments use full-batch gradient descent with MSE loss, no momentum, no weight decay. CIFAR-10 experiments use a 2,000-image subset.
+Every experiment uses full-batch gradient descent, MSE loss, no momentum, no weight decay, on a 2,000-image CIFAR-10 subset. Learning rates are expressed as fractions of the Edge of Stability threshold 2/λ_max.
 
-### Original experiments
-
-```bash
-# CNN on CIFAR-10 (Phase 3), seeds 0–2
-python code/phase3_experiments_k.py
-
-# CNN extension, seeds 3–9
-python code/cnn_seeds_extension_fixed.py --seeds 3 4 5 6 7 8 9
-
-# Persistent homology (TDA) analysis
-python code/experiment_L_tda_fixed.py
-```
-
-### Revision 1 experiments
+### Cross-architecture experiments (10 seeds each)
 
 ```bash
-# Cross-architecture, N=10 seeds (MLP w50, MLP w85, CNN/synthetic)
+# MLP (156K params) on CIFAR-10
 python code/revision1/r1_cross_experiments.py --condition mlp_cifar_w50 --seeds 0 1 2 3 4 5 6 7 8 9
+
+# MLP (269K params) on CIFAR-10
 python code/revision1/r1_cross_experiments.py --condition mlp_cifar_w85 --seeds 0 1 2 3 4 5 6 7 8 9
+
+# CNN on synthetic data (structureless control)
 python code/revision1/r1_cross_experiments.py --condition cnn_synthetic --seeds 0 1 2 3 4 5 6 7 8 9
 
-# Merge seeds into unified files
+# Merge all seeds into unified data files
 python code/revision1/r1_merge.py
+```
 
-# D₂ calibration at n=400
+### Supplemental experiments
+
+```bash
+# D₂ pipeline calibration (Lorenz, Hénon, Mackey-Glass, tori)
 python code/revision1/r1_calibration_n400.py
 
-# D₂(N) convergence (GPU)
+# D₂ convergence with trajectory length (GPU)
 python code/revision1/r1_d2_convergence.py
 
 # Persistent homology for MLPs (GPU + ripser)
 python code/revision1/r1_tda_mlp_cifar.py
 
-# ε/N_inputs sensitivity audit
+# Perturbation sensitivity audit (ε, N_inputs)
 python code/revision1/r1_lyap_units_check.py
 
-# Label-noise sweep (GPU, 42 runs)
+# Label-noise sweep — 42 GPU runs
 python code/revision1/r1_label_noise_sweep.py
 
-# λ–D₂ dissociation analysis (no GPU needed)
+# λ–D₂ dissociation analysis (CPU only)
 python code/revision1/r1_dissociation_analysis.py
+
+# Batch-size sweep (SGD robustness)
+python code/revision1/r1_batch_size_sweep.py
 ```
 
-### Figure generation (no GPU needed)
+### Generate figures
 
 ```bash
-python code/revision1/r1_figure2.py
-python code/revision1/r1_label_noise_figure.py
-python code/revision1/r1_d2_convergence_figure.py
-python code/revision1/r1_persistence_figure.py
-python code/revision1/r1_dissociation_analysis.py
+python code/revision1/r1_figure2.py                  # Fig. 2: cross-experiment D₂
+python code/revision1/r1_label_noise_figure.py        # Fig. 3: label-noise sweep
+python code/revision1/r1_d2_convergence_figure.py     # SM: D₂(N) convergence
+python code/revision1/r1_persistence_figure.py        # SM: persistence diagrams
+python code/revision1/r1_dissociation_analysis.py     # SM: λ–D₂ dissociation
+python code/revision1/r1_batch_size_figure.py         # SM: batch-size sweep
 ```
 
-Requirements: PyTorch, NumPy, SciPy, torchvision, matplotlib, `ripser` (for TDA).
+---
+
+## Repository structure
+
+```
+attractor/
+├── paper/
+│   ├── prl_attractor.tex            main manuscript (RevTeX 4.2)
+│   ├── supplemental.tex             supplemental material
+│   ├── cover_letter.tex             PRL cover letter
+│   ├── references.bib               bibliography
+│   └── figures/                     all publication figures
+│
+├── code/
+│   ├── phase3_experiments_k.py      original CNN/CIFAR-10 experiments
+│   ├── cnn_seeds_v2.py              CNN multi-seed (seeds 0–2)
+│   ├── cnn_seeds_extension_fixed.py CNN extension (seeds 3–9)
+│   ├── experiment_L_tda_fixed.py    original persistent homology
+│   └── revision1/                   all revision experiments & figures
+│
+├── data/
+│   ├── main/                        data backing main-text results
+│   │   └── revision1/               10-seed merged data, label-noise sweep
+│   ├── supplemental/                data backing supplement tables
+│   │   └── revision1/               calibration, TDA, convergence, dissociation
+│   └── phase1_phase2/               early exploration (read-only archive)
+│
+└── docs/                            internal notes and drafts
+```
+
+All data files are JSON. Each contains metadata (protocol hash, git commit, torch version, seed list) for full reproducibility.
+
+---
+
+## Methods at a glance
+
+**Chaos measurement.** Two model copies train from identical initialization; one is perturbed by ε = 10⁻⁵ in weight space. The divergence rate λ is measured in *function space* (on held-out inputs) to avoid gauge artifacts from weight-space symmetries in overparameterized networks.
+
+**Correlation dimension.** *D*₂ is computed via the Grassberger–Procaccia algorithm on ~400 function-space trajectory points. The pipeline is calibrated against 11 known dynamical systems (Lorenz, Hénon, Rössler, Mackey-Glass, smooth tori) at the production trajectory length; reported values are conservative lower bounds (15–35% systematic underestimate for fractal attractors).
+
+**Topological confirmation.** Persistent homology (ripser) independently confirms fractal structure: hundreds of H₁ features at all persistence scales with gap ratio ≈ 1.0 — the signature of a strange attractor, not a smooth torus.
+
+---
+
+## Citation
+
+```bibtex
+@article{paul2026attractors,
+  author  = {Paul, Evan},
+  title   = {Strange Attractors in Gradient Descent: Data Structure and
+             Loss Geometry Control Fractal Dimension},
+  journal = {Physical Review Letters},
+  year    = {2026},
+  note    = {Submitted}
+}
+```
 
 ---
 
 ## License
 
-- Code: MIT
-- Data and paper: CC-BY 4.0
+Code is released under the [MIT License](https://opensource.org/licenses/MIT). The paper, figures, and data are released under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+
+---
+
+<p align="center">
+  <sub>AI language models (Claude, Anthropic) were used as research tools in this work. See the manuscript acknowledgments and cover letter for a full disclosure. All scientific conclusions are the author's sole responsibility.</sub>
+</p>
