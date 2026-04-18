@@ -23,7 +23,7 @@ We measure the correlation dimension $D_2$ of neural network training trajectori
 
 \section{Introduction}
 
-Gradient descent is a deterministic dynamical system. Each update maps the network's function to a new function, tracing a trajectory through function space. Recent work shows this trajectory is rich: Edge of Stability oscillations~\cite{cohen2021,damian2023}, period-doubling cascades~\cite{kalra2025,ghosh2025}, positive Lyapunov exponents~\cite{morales2024,storm2024}. These confirm chaos. They do not tell us its shape. We measure the correlation dimension $D_2$~\cite{grassberger1983} and find strange attractors shaped by two mechanisms: structured data creates oscillatory modes at moderate learning rates; loss-surface roughness sustains chaos near the Edge of Stability.
+Gradient descent is a deterministic dynamical system. Each update maps the network's function to a new function, tracing a trajectory through function space. Recent work shows this trajectory is rich: Edge of Stability oscillations~\cite{cohen2021,damian2023}, period-doubling cascades~\cite{kalra2025,ghosh2025}, positive Lyapunov exponents~\cite{morales2024,storm2024}. These confirm chaos. They do not tell us its shape. Sohl-Dickstein~\cite{sohldickstein2024} showed that the boundary of trainability in hyperparameter space is itself fractal; here we study a different object---the training trajectory at fixed hyperparameters---and measure its correlation dimension $D_2$~\cite{grassberger1983}. We find strange attractors shaped by two mechanisms: structured data creates oscillatory modes at moderate learning rates; loss-surface roughness sustains chaos near the Edge of Stability.
 
 \section{Methods}
 
